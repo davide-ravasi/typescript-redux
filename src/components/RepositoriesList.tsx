@@ -1,27 +1,40 @@
-import { useState } from 'react';
-import {useTypedSelector} from '../hooks/useTypedSelector';
-import useActions from '../hooks/useActions';
+import { useState } from "react";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import useActions from "../hooks/useActions";
 
 const RepositoriesList: React.FC = () => {
-    const [term, setTerm ] = useState('');
-    const { searchRepositories } = useActions();
-    const state = useTypedSelector((state) => state.repositories);
+  const [term, setTerm] = useState("");
+  const { searchRepositories } = useActions();
+  const { repositories, loading, error } = useTypedSelector(
+    (state) => state.repositories
+  );
 
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-        searchRepositories(term);
+    searchRepositories(term);
+  };
 
-    }
+  return (
+    <div>
+      <form onSubmit={onSubmit}>
+        <input
+          type="text"
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+        />
+        <button type="submit">Submit</button>
+      </form>
 
-    return (
-        <div>
-            <form onSubmit={onSubmit}>
-                <input type="text" value={term} onChange={(e) => setTerm(e.target.value)} />
-                <button type="submit">Submit</button>
-            </form>
-        </div>
-    )
-}
+      {error && <div>{error}</div>}
+      {loading && <div>...loading</div>}
+      {!error &&
+        !loading &&
+        repositories.map((term) => {
+          return <div>{term}</div>;
+        })}
+    </div>
+  );
+};
 
 export default RepositoriesList;
